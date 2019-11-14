@@ -1,0 +1,32 @@
+﻿<Properties StartupConfiguration="{69E522BF-78A6-4A29-AAC8-506330C19D5E}|Default">
+  <MonoDevelop.Ide.Workbench ActiveDocument="online-calculator/Controllers/CalculatorController.cs">
+    <Files>
+      <File FileName="online-calculator/Controllers/CalculatorController.cs" Line="88" Column="1" />
+      <File FileName="online-calculator/Properties/launchSettings.json" Line="24" Column="8" />
+      <File FileName="online-calculator/Program.cs" Line="16" Column="1" />
+      <File FileName="online-calculator/Program.cs" Line="16" Column="1" />
+      <File FileName="online-calculator/appsettings.json" Line="1" Column="1" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="online-calculator" expanded="True">
+            <Node name="online-calculator" expanded="True">
+              <Node name="Controllers" expanded="True">
+                <Node name="CalculatorController.cs" selected="True" />
+              </Node>
+              <Node name="Properties" expanded="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.ItemProperties.online-calculator PreferredExecutionTarget="/Applications/Google Chrome.app" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>
