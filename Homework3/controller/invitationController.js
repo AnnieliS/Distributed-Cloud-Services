@@ -18,14 +18,14 @@ class InvitationController {
                 message: 'Incorrect date!'
             };
 
-            let inv = new Invitation({
+            let inv = new Invitations({
                 id: req.body.uniqId,
                 names_getting_married: req.body.names_getting_married,
                 date: date.format('DD-MM-YYYY')
             });
 
             if (req.body.attendence) {
-                if (req.body.rating >= 0)
+                if (req.body.attendence >= 0)
                     inv.attendence = req.body.attendence;
                 else
                     throw {
@@ -79,59 +79,6 @@ class InvitationController {
         }
     }
 
-    // static async topRated(req, res) {
-    //     try {
-    //         let movies = await Movies.getMovies();
-    //         if (!movies || movies.length == 0) throw {
-    //             status: 204,
-    //             message: 'There are no record'
-    //         };
-
-    //         let top = movies[0].rating;
-    //         let topList = [];
-    //         movies.forEach(element => {
-    //             if (top < element.rating)
-    //                 top = element.rating;
-    //         });
-
-    //         movies.forEach(element => {
-    //             if (top == element.rating)
-    //                 topList.push(element);
-    //         });
-
-    //         res.status(200).json(topList);
-    //     } catch (err) {
-    //         errHandler.Error(res, err);
-    //     }
-    // }
-
-    // static async filter(req, res) {
-    //     try {
-    //         let movies = await Movies.getMovies();
-    //         if (!movies || movies.length == 0) throw {
-    //             status: 204,
-    //             message: 'There are no record'
-    //         };
-
-    //         let filtered = [];
-
-    //         movies.forEach(element => {
-    //             if (element.name == req.params.data || element._id == req.params.data || element.rating == req.params.rating)
-    //                 filtered.push(element);
-    //             if (moment(req.params.data).isValid() && moment(element.date, "DD-MM-YYYY") == moment(req.params.data, "DD-MM-YYYY"))
-    //                 filtered.push(element);
-    //         });
-
-    //         if (filtered.length == 0) throw {
-    //             status: 204,
-    //             message: 'There are no records with this filter'
-    //         };
-
-    //         res.status(200).json(filtered);
-    //     } catch (err) {
-    //         errHandler.Error(res, err);
-    //     }
-    // }
 
     static async update(req, res) {
         try {
@@ -139,7 +86,7 @@ class InvitationController {
             let obj = await Invitations.getInvitation(req.params.uniqId);
             if (!obj) throw {
                 status: 204,
-                message: 'The movie doesnt exist'
+                message: 'The invitation doesnt exist'
             };
 
             if (req.body.names_getting_married)
@@ -197,6 +144,11 @@ class InvitationController {
             message: 'Invalid Id'
         };
     }
+
+
+    
 }
+
+
 
 module.exports = InvitationController;

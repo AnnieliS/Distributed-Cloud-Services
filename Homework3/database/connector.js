@@ -69,6 +69,11 @@ scheme.static('deleteInvitation', async function(id){
     });
 });
 
+scheme.method('exists', async function () {
+    return await this.model('Invitations').findById(this.id,(err, res)=>{
+        if(err) throw err;
+    })
+});
 
 let Invitations = mongoose.model('Invitations', scheme);
 
