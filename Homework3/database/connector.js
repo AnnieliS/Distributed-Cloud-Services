@@ -15,10 +15,15 @@ mongoose
     .catch(err => console.log(`connection error:`, err))
 
 let scheme = new mongoose.Schema({
-    names_getting_married: {
+    uniqId: {
         type: String,
         required: true,
         index: true,
+        unique: true
+    },
+    names_getting_married: {
+        type: String,
+        required: true,
     },
     date: {
         type: String,

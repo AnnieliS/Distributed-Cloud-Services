@@ -1,51 +1,51 @@
-const Movies = require('../database/mongoController');
+const Invitations = require('../database/mongoController');
 const mongoose = require('mongoose');
 const moment = require('moment');
 const errHandler = require('../middleware/errorHandler');
-class MovieController {
+class InvitationController {
     static async create(req, res) {
         try {
-            if (!req.body.barcode || !req.body.name || !req.body.year || !req.body.month || !req.body.day) throw {
+            if (!req.body.uniqId || !req.body.names_getting_married || !req.body.name || !req.body.year || !req.body.month || !req.body.day || !req.body.attendence) throw {
                 status: 404,
                 message: 'Missing Information try again'
             };
-            this.checkID(req.body.barcode);
+            this.checkID(req.body.uniqId);
 
-            let date = moment(`${req.body.day}-${req.body.month}-${req.body.year}`, "MM-MM-YYYY");
+            let date = moment(`${req.body.day}-${req.body.month}-${req.body.year}`, "DD-MM-YYYY");
 
             if (!date.isValid()) throw {
                 status: 404,
                 message: 'Incorrect date!'
             };
 
-            let m = new Movies({
-                barcode: req.body.barcode,
-                name: req.body.name,
-                releaseDate: date.format('DD-MM-YYYY')
+            let inv = new Invitation({
+                id: req.body.uniqId,
+                names_getting_married: req.body.names_getting_married,
+                date: date.format('DD-MM-YYYY')
             });
 
-            if (req.body.rating) {
-                if (req.body.rating >= 0 && req.body.rating <= 10)
-                    m.rating = req.body.rating;
+            if (req.body.attendence) {
+                if (req.body.rating >= 0)
+                    inv.attendence = req.body.attendence;
                 else
                     throw {
                         status: 404,
-                        message: 'Incorrect Rating! please put a number between 0 and 10'
+                        message: 'Invalid number of attending guests'
                     };
             }
 
-            m._id = new mongoose.Types.ObjectId(m.barcode);
+            inv._id = new mongoose.Types.ObjectId(inv.uniqId);
 
-            let obj = await m.exists();
+            let obj = await inv.exists();
 
             if (obj)
                 throw {
                     status: 409,
-                    message: 'A movie with that barcode already exists'
+                    message: 'An invitation with same id already exists' 
                 };
 
-            await m.save();
-            res.status(200).send(`Inserted Successfully under ${m.id} or ${m.barcode}`);
+            await inv.save();
+            res.status(200).send(`Inserted Successfully under ${inv.id} or ${inv.uniqId}`);
 
         } catch (err) {
             errHandler.Error(res, err);
@@ -54,11 +54,11 @@ class MovieController {
 
     static async read(req, res) {
         try {
-            this.checkID(req.params.barcode);
-            let obj = await Movies.getMovie(req.params.barcode);
+            this.checkID(req.params.uniqId);
+            let obj = await Invitations.getInvitation(req.params.uniqId);
             if (!obj) throw {
                 status: 204,
-                message: 'There is no record with that id'
+                message: 'There is no invitation with that id'
             };
             res.status(200).json(obj);
         } catch (err) {
@@ -68,10 +68,10 @@ class MovieController {
 
     static async readAll(req, res) {
         try {
-            let obj = await Movies.getMovies();
+            let obj = await Invitations.getInvitations();
             if (!obj || obj.length == 0) throw {
                 status: 204,
-                message: 'There are no record'
+                message: 'There are no invitations'
             };
             res.status(200).json(obj);
         } catch (err) {
@@ -79,71 +79,71 @@ class MovieController {
         }
     }
 
-    static async topRated(req, res) {
-        try {
-            let movies = await Movies.getMovies();
-            if (!movies || movies.length == 0) throw {
-                status: 204,
-                message: 'There are no record'
-            };
+    // static async topRated(req, res) {
+    //     try {
+    //         let movies = await Movies.getMovies();
+    //         if (!movies || movies.length == 0) throw {
+    //             status: 204,
+    //             message: 'There are no record'
+    //         };
 
-            let top = movies[0].rating;
-            let topList = [];
-            movies.forEach(element => {
-                if (top < element.rating)
-                    top = element.rating;
-            });
+    //         let top = movies[0].rating;
+    //         let topList = [];
+    //         movies.forEach(element => {
+    //             if (top < element.rating)
+    //                 top = element.rating;
+    //         });
 
-            movies.forEach(element => {
-                if (top == element.rating)
-                    topList.push(element);
-            });
+    //         movies.forEach(element => {
+    //             if (top == element.rating)
+    //                 topList.push(element);
+    //         });
 
-            res.status(200).json(topList);
-        } catch (err) {
-            errHandler.Error(res, err);
-        }
-    }
+    //         res.status(200).json(topList);
+    //     } catch (err) {
+    //         errHandler.Error(res, err);
+    //     }
+    // }
 
-    static async filter(req, res) {
-        try {
-            let movies = await Movies.getMovies();
-            if (!movies || movies.length == 0) throw {
-                status: 204,
-                message: 'There are no record'
-            };
+    // static async filter(req, res) {
+    //     try {
+    //         let movies = await Movies.getMovies();
+    //         if (!movies || movies.length == 0) throw {
+    //             status: 204,
+    //             message: 'There are no record'
+    //         };
 
-            let filtered = [];
+    //         let filtered = [];
 
-            movies.forEach(element => {
-                if (element.name == req.params.data || element._id == req.params.data || element.rating == req.params.rating)
-                    filtered.push(element);
-                if (moment(req.params.data).isValid() && moment(element.date, "DD-MM-YYYY") == moment(req.params.data, "DD-MM-YYYY"))
-                    filtered.push(element);
-            });
+    //         movies.forEach(element => {
+    //             if (element.name == req.params.data || element._id == req.params.data || element.rating == req.params.rating)
+    //                 filtered.push(element);
+    //             if (moment(req.params.data).isValid() && moment(element.date, "DD-MM-YYYY") == moment(req.params.data, "DD-MM-YYYY"))
+    //                 filtered.push(element);
+    //         });
 
-            if (filtered.length == 0) throw {
-                status: 204,
-                message: 'There are no records with this filter'
-            };
+    //         if (filtered.length == 0) throw {
+    //             status: 204,
+    //             message: 'There are no records with this filter'
+    //         };
 
-            res.status(200).json(filtered);
-        } catch (err) {
-            errHandler.Error(res, err);
-        }
-    }
+    //         res.status(200).json(filtered);
+    //     } catch (err) {
+    //         errHandler.Error(res, err);
+    //     }
+    // }
 
     static async update(req, res) {
         try {
-            this.checkID(req.params.barcode);
-            let obj = await Movies.getMovie(req.params.barcode);
+            this.checkID(req.params.uniqId);
+            let obj = await Invitations.getInvitation(req.params.uniqId);
             if (!obj) throw {
                 status: 204,
                 message: 'The movie doesnt exist'
             };
 
-            if (req.body.name)
-                obj.name = req.body.name;
+            if (req.body.names_getting_married)
+                obj.names_getting_married = req.body.names_getting_married;
             if (req.body.year && req.body.month && req.body.day) {
                 let date = moment(`${req.body.day}-${req.body.month}-${req.body.year}`, "DD-MM-YYYY");
 
@@ -152,13 +152,16 @@ class MovieController {
                     message: 'Incorrect date!'
                 };
 
-                obj.releaseDate = date.format('DD-MM-YYYY');
+                obj.date = date.format('DD-MM-YYYY');
             }
 
-            if (req.body.rating)
-                obj.rating = req.body.rating;
+            if (req.body.name)
+                obj.name = req.body.name;
 
-            let r = await Movies.updateMovie(obj);
+                if (req.body.attendence)
+                obj.attendence = req.body.attendence;
+
+            let r = await Invitations.updateInvitation(obj);
             if (r.nModified == 0)
                 res.status(200).send(`Already up to date`);
             else
@@ -171,13 +174,13 @@ class MovieController {
 
     static async delete(req, res) {
         try {
-            this.checkID(req.params.barcode);
-            let obj = await Movies.getMovie(req.params.barcode);
+            this.checkID(req.params.uniqId);
+            let obj = await Invitation.getInvitation(req.params.uniqId);
             if (!obj) throw {
                 status: 204,
-                message: 'The movie doesnt exist'
+                message: 'The invitation doesnt exist'
             };
-            let tmp = await Movies.deleteMovie(req.params.barcode);
+            let tmp = await Invitations.deleteInvitation(req.params.uniqId);
             if (tmp.deleteCount == 0) throw {
                 status: 204,
                 message: 'There is notihng to delete'
@@ -196,4 +199,4 @@ class MovieController {
     }
 }
 
-module.exports = MovieController;
+module.exports = InvitationController;
