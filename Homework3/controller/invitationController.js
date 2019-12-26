@@ -1,7 +1,7 @@
 const Invitations = require('../database/connector');
 const mongoose = require('mongoose');
 const moment = require('moment');
-const errHandler = require('../errorHandle/errorhandler');
+const errHandler = require('../middleware/errorHandler');
 class InvitationController {
     static async create(req, res) {
         try {
