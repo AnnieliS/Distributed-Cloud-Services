@@ -123,7 +123,7 @@ class InvitationController {
     static async delete(req, res) {
         try {
             this.checkID(req.params.inviteNum);
-            let obj = await Invitation.getInvitation(req.params.inviteNum);
+            let obj = await Invitations.getInvitation(req.params.inviteNum);
             if (!obj) throw {
                 status: 204,
                 message: 'The invitation doesnt exist'
