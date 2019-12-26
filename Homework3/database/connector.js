@@ -15,11 +15,11 @@ mongoose
     .catch(err => console.log(`connection error:`, err))
 
 let scheme = new mongoose.Schema({
-    uniqId: {
+    inviteNum: {
         type: String,
-        required: true,
         index: true,
-        unique: true
+        unique: true,
+        required: true
     },
     names_getting_married: {
         type: String,
@@ -32,7 +32,7 @@ let scheme = new mongoose.Schema({
     },
     name: {
         type: String,
-        required: true,
+        required: true
     },
     attendence: {
         type: Number,
@@ -70,11 +70,11 @@ scheme.static('deleteInvitation', async function(id){
 });
 
 scheme.method('exists', async function () {
-    return await this.model('Invitations').findById(this.id,(err, res)=>{
+    return await this.model('Invites').findById(this.id,(err, res)=>{
         if(err) throw err;
     })
 });
 
-let Invitations = mongoose.model('Invitations', scheme);
+let Invitations = mongoose.model('Invites', scheme);
 
 module.exports = Invitations;

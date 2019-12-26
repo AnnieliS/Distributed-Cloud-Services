@@ -5,23 +5,24 @@ const errHandler = require('../errorHandle/errorhandler');
 class InvitationController {
     static async create(req, res) {
         try {
-            if (!req.body.uniqId || !req.body.names_getting_married || !req.body.name || !req.body.year || !req.body.month || !req.body.day || !req.body.attendence) throw {
+            if (!req.body.inviteNum || !req.body.names_getting_married || !req.body.name || !req.body.year || !req.body.month || !req.body.day || !req.body.attendence) throw {
                 status: 404,
                 message: 'Missing Information try again'
             };
-            this.checkID(req.body.uniqId);
+            this.checkID(req.body.inviteNum);
 
             let date = moment(`${req.body.day}-${req.body.month}-${req.body.year}`, "DD-MM-YYYY");
 
             if (!date.isValid()) throw {
                 status: 404,
-                message: 'Incorrect date!'
+                message: 'Incorrect date'
             };
 
             let inv = new Invitations({
-                id: req.body.uniqId,
+                inviteNum: req.body.inviteNum,
                 names_getting_married: req.body.names_getting_married,
-                date: date.format('DD-MM-YYYY')
+                date: date.format('DD-MM-YYYY'),
+                name: req.body.name
             });
 
             if (req.body.attendence) {
@@ -34,7 +35,7 @@ class InvitationController {
                     };
             }
 
-            inv._id = new mongoose.Types.ObjectId(inv.uniqId);
+            inv._id = new mongoose.Types.ObjectId(inv.inviteNum);
 
             let obj = await inv.exists();
 
@@ -45,7 +46,7 @@ class InvitationController {
                 };
 
             await inv.save();
-            res.status(200).send(`Inserted Successfully under ${inv.id} or ${inv.uniqId}`);
+            res.status(200).send(`Inserted Successfully under ${inv.id} or ${inv.inviteNum}`);
 
         } catch (err) {
             errHandler.Error(res, err);
@@ -54,8 +55,8 @@ class InvitationController {
 
     static async read(req, res) {
         try {
-            this.checkID(req.params.uniqId);
-            let obj = await Invitations.getInvitation(req.params.uniqId);
+            this.checkID(req.params.inviteNum);
+            let obj = await Invitations.getInvitation(req.params.inviteNum);
             if (!obj) throw {
                 status: 204,
                 message: 'There is no invitation with that id'
@@ -82,8 +83,8 @@ class InvitationController {
 
     static async update(req, res) {
         try {
-            this.checkID(req.params.uniqId);
-            let obj = await Invitations.getInvitation(req.params.uniqId);
+            this.checkID(req.params.inviteNum);
+            let obj = await Invitations.getInvitation(req.params.inviteNum);
             if (!obj) throw {
                 status: 204,
                 message: 'The invitation doesnt exist'
@@ -96,7 +97,7 @@ class InvitationController {
 
                 if (!date.isValid()) throw {
                     status: 404,
-                    message: 'Incorrect date!'
+                    message: 'Incorrect date'
                 };
 
                 obj.date = date.format('DD-MM-YYYY');
@@ -121,13 +122,13 @@ class InvitationController {
 
     static async delete(req, res) {
         try {
-            this.checkID(req.params.uniqId);
-            let obj = await Invitation.getInvitation(req.params.uniqId);
+            this.checkID(req.params.inviteNum);
+            let obj = await Invitation.getInvitation(req.params.inviteNum);
             if (!obj) throw {
                 status: 204,
                 message: 'The invitation doesnt exist'
             };
-            let tmp = await Invitations.deleteInvitation(req.params.uniqId);
+            let tmp = await Invitations.deleteInvitation(req.params.inviteNum);
             if (tmp.deleteCount == 0) throw {
                 status: 204,
                 message: 'There is notihng to delete'
