@@ -4,6 +4,6 @@ const api = require('./routers/api');
 
 app.use(express.json());
 
-app.use('/api',api);
+app.use('/',api);
 
 module.exports = app;
